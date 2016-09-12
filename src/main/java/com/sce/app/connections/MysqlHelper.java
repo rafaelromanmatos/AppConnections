@@ -35,7 +35,7 @@ public class MysqlHelper {
             basicDataSource.setValidationQuery("SELECT 1");
             dataSource = basicDataSource;
         } catch (Exception ex) {
-            System.out.println("" + ex.getMessage());
+            System.out.println("  " + ex.getMessage());
         }
     }
 
@@ -62,6 +62,23 @@ public class MysqlHelper {
             if (null != cn) {
                 cn.close();
             }
+        }
+    }
+
+    public Object[] executeQueryArray(String nameMethod, Object[] parameters) throws Exception {
+        try {
+            Object[] obj = new Object[3];
+            Connection cn = dataSource.getConnection();
+            CallableStatement cmd = cn.prepareCall(nameMethod);
+            for (int i = 0; i < parameters.length; i++) {
+                cmd.setObject(i + 1, parameters[i]);
+            }
+            obj[0] = cmd.executeQuery();
+            obj[1] = cmd;
+            obj[2] = cn;
+            return obj;
+        } catch (SQLException ex) {
+            throw ex;
         }
     }
 
