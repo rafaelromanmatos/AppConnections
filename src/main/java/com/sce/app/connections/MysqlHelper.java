@@ -35,7 +35,7 @@ public class MysqlHelper {
             basicDataSource.setValidationQuery("SELECT 1");
             dataSource = basicDataSource;
         } catch (Exception ex) {
-            System.out.println("  " + ex.getMessage());
+            System.out.println("" + ex.getMessage());
         }
     }
 
