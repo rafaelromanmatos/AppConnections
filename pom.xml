@@ -59,6 +59,11 @@
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+            <version>1.5.6</version>
+        </dependency>
     </dependencies>
     <name>AppConnections</name>
 </project>
