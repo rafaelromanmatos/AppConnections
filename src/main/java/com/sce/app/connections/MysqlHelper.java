@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import org.apache.commons.dbcp.BasicDataSource;
 
 public class MysqlHelper {
@@ -205,4 +207,78 @@ public class MysqlHelper {
         }
         return obj;
     }
+
+    public void executeQueryTableModel(String nameMethod, Object[] parameters, JTable jtable, boolean isAutosize) throws Exception {
+        DefaultTableModel dt = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }
+        };
+        ResultSet rs = null;
+        Connection cn = null;
+        CallableStatement cmd = null;
+        List<Integer> sizeHeadersJtable = new ArrayList<>();
+        try {
+            cn = dataSource.getConnection();
+            cmd = cn.prepareCall(nameMethod);
+            cmd.execute("SET @var1= 0;");
+            cmd.execute("SET @var2= 0;");
+            cmd.execute("SET @var3= 0;");
+            cmd.execute("SET @var4= 0;");
+            cmd.execute("SET @var5= 0;");
+            cmd.execute("SET @var6= 0;");
+            cmd.execute("SET @var7= 0;");
+            cmd.execute("SET @var8= 0;");
+            cmd.execute("SET @var9= 0;");
+            cmd.execute("SET @var10= 0;");
+            cmd.execute("SET @var11= 0;");
+            cmd.execute("SET @var12= 0;");
+
+            for (int i = 0; i < parameters.length; i++) {
+                cmd.setObject(i + 1, parameters[i]);
+            }
+            rs = cmd.executeQuery();
+            rs.last(); //me lleva al ultimo
+            int cols = rs.getMetaData().getColumnCount();
+            dt.setRowCount(rs.getRow());
+            rs.beforeFirst();//me lleva al primero
+            for (int i = 0; i < cols; i++) {
+                dt.addColumn(rs.getMetaData().getColumnLabel(i + 1));
+                sizeHeadersJtable.add(rs.getMetaData().getColumnDisplaySize(i + 1));
+            }
+            int rows = 0;
+            while (rs.next()) {
+                for (int a = 0; a < cols; a++) {
+                    dt.setValueAt(rs.getObject(a + 1), rows, a);
+                }
+                rows++;
+            }
+            jtable.setModel(dt);
+            if (isAutosize) {
+                setFormatJtable(jtable, sizeHeadersJtable);
+            }
+        } catch (SQLException ex) {
+            throw ex;
+        } finally {
+            if (null != rs) {
+                rs.close();
+            }
+            if (null != cmd) {
+                cmd.close();
+            }
+            if (null != cn) {
+                cn.close();
+            }
+        }
+    }
+
+    private void setFormatJtable(JTable jtable, List lst) {
+        int sizeHeaderField;
+        for (int i = 0; i < jtable.getColumnCount(); i++) {
+            sizeHeaderField = (Integer) lst.get(i);
+            jtable.getColumnModel().getColumn(i).setPreferredWidth(sizeHeaderField >= 70 ? sizeHeaderField * 2 : sizeHeaderField * 10);
+        }
+    }
+
 }
