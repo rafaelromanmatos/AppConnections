@@ -12,7 +12,7 @@ public class AccessHelper {
     }
 
     public AccessHelper(String dir) {
-        this.dir = dir;  
+        this.dir = dir;
     }
 
     private Connection getOpenConnection() throws Exception {
