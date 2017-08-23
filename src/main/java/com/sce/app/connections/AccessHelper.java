@@ -19,7 +19,7 @@ public class AccessHelper {
         try {
             cn = DriverManager.getConnection("jdbc:ucanaccess://" + dir);
         } catch (SQLException ex) {
-            throw new Exception("Error  :  Ruta " + dir);
+            throw new Exception("Error  :  Ruta  " + dir);
         }
         return cn;
     }
